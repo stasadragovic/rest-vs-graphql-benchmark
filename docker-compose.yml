@@ -1,0 +1,30 @@
+services:
+  db:
+    image: postgres:17
+    container_name: diplomski-db
+    environment:
+      POSTGRES_DB: projectdb
+      POSTGRES_USER: diplomski
+      POSTGRES_PASSWORD: diplomski
+    ports:
+      - "5432:5432"
+    # pg_stat_statements beleži sve SQL upite koje aplikacija pošalje bazi;
+    # koristićemo ga da prebrojimo upite kod REST-a i GraphQL-a (N+1 problem)
+    command: >
+      postgres
+      -c shared_preload_libraries=pg_stat_statements
+      -c pg_stat_statements.track=all
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      # skripte iz ovog foldera pokreću se samo pri PRVOM pokretanju (prazna baza),
+      # i to po abecednom redu imena: prvo šema, pa podaci
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./database/data.sql:/docker-entrypoint-initdb.d/02-data.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U diplomski -d projectdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  db-data:
