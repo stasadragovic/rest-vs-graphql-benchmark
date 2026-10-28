@@ -1,0 +1,50 @@
+type Query {
+    projects(limit: Int! = 20): [Project!]!
+    project(id: ID!): Project
+    task(id: ID!): Task
+    user(id: ID!): User
+}
+
+type Project {
+    id: ID!
+    name: String!
+    description: String
+    createdAt: String!
+    owner: User!
+    tasks: [Task!]!
+}
+
+type Task {
+    id: ID!
+    title: String!
+    description: String
+    status: TaskStatus!
+    priority: Int!
+    dueDate: String
+    createdAt: String!
+    updatedAt: String!
+    project: Project!
+    assignee: User
+    comments: [Comment!]!
+}
+
+enum TaskStatus {
+    TODO
+    IN_PROGRESS
+    DONE
+}
+
+type Comment {
+    id: ID!
+    text: String!
+    createdAt: String!
+    task: Task!
+    author: User!
+}
+
+type User {
+    id: ID!
+    name: String!
+    email: String!
+    createdAt: String!
+}
