@@ -54,6 +54,11 @@ public class RestApiController {
         return commentService.findByTask(id);
     }
 
+    @GetMapping("/users")
+    public List<UserDto> getUsers(@RequestParam(required = false) List<Long> ids) {
+        return userService.findAll(ids);
+    }
+
     @GetMapping("/users/{id}")
     public UserDto getUser(@PathVariable Long id) {
         return userService.findById(id).orElseThrow(this::notFound);
