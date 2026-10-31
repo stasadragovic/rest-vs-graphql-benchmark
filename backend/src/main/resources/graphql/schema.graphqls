@@ -2,6 +2,7 @@ type Query {
     projects(limit: Int! = 20): [Project!]!
     project(id: ID!): Project
     task(id: ID!): Task
+    users(ids: [ID!]): [User!]!
     user(id: ID!): User
 }
 
@@ -47,4 +48,5 @@ type User {
     name: String!
     email: String!
     createdAt: String!
+    assignedTasks: [Task!]!
 }

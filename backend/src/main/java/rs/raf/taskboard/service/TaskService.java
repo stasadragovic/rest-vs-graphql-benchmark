@@ -41,4 +41,16 @@ public class TaskService {
                 .map(TaskDto::from)
                 .collect(Collectors.groupingBy(TaskDto::projectId));
     }
+
+    public List<TaskDto> findByAssignee(Long assigneeId) {
+        return taskRepository.findByAssigneeIdOrderByIdAsc(assigneeId).stream()
+                .map(TaskDto::from)
+                .toList();
+    }
+
+    public Map<Long, List<TaskDto>> findByAssignees(Collection<Long> assigneeIds) {
+        return taskRepository.findByAssigneeIdInOrderByIdAsc(assigneeIds).stream()
+                .map(TaskDto::from)
+                .collect(Collectors.groupingBy(TaskDto::assigneeId));
+    }
 }

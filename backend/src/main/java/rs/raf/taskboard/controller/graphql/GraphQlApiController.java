@@ -37,6 +37,11 @@ public class GraphQlApiController {
     }
 
     @QueryMapping
+    public List<UserDto> users(@Argument List<Long> ids) {
+        return userService.findAll(ids);
+    }
+
+    @QueryMapping
     public UserDto user(@Argument Long id) {
         return userService.findById(id).orElse(null);
     }
