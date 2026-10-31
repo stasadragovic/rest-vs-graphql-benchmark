@@ -47,4 +47,5 @@ type User {
     name: String!
     email: String!
     createdAt: String!
+    assignedTasks: [Task!]!
 }

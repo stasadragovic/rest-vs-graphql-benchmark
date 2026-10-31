@@ -60,4 +60,9 @@ public class NaiveGraphQlResolver {
     public UserDto author(CommentDto comment) {
         return userService.findById(comment.authorId()).orElseThrow();
     }
+
+    @SchemaMapping(typeName = "User")
+    public List<TaskDto> assignedTasks(UserDto user) {
+        return taskService.findByAssignee(user.id());
+    }
 }

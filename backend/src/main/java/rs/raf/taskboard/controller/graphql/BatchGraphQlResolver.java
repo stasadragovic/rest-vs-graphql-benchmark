@@ -75,4 +75,10 @@ public class BatchGraphQlResolver {
         Map<Long, UserDto> users = userService.findByIds(comments.stream().map(CommentDto::authorId).distinct().toList());
         return comments.stream().map(c -> users.get(c.authorId())).toList();
     }
+
+    @BatchMapping(typeName = "User")
+    public List<List<TaskDto>> assignedTasks(List<UserDto> users) {
+        Map<Long, List<TaskDto>> tasks = taskService.findByAssignees(users.stream().map(UserDto::id).toList());
+        return users.stream().map(u -> tasks.getOrDefault(u.id(), List.of())).toList();
+    }
 }

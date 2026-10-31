@@ -59,6 +59,11 @@ public class RestApiController {
         return userService.findById(id).orElseThrow(this::notFound);
     }
 
+    @GetMapping("/users/{id}/tasks")
+    public List<TaskDto> getUserTasks(@PathVariable Long id) {
+        return taskService.findByAssignee(id);
+    }
+
     private ResponseStatusException notFound() {
         return new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
