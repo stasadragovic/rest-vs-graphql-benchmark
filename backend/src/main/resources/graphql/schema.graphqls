@@ -6,6 +6,32 @@ type Query {
     user(id: ID!): User
 }
 
+type Mutation {
+    createTask(projectId: ID!, input: CreateTaskInput!): Task!
+    updateTask(id: ID!, input: UpdateTaskInput!): Task!
+    updateTaskStatus(id: ID!, status: TaskStatus!): Task!
+    deleteTask(id: ID!): Boolean!
+    updateComment(id: ID!, text: String!): Comment!
+    deleteComment(id: ID!): Boolean!
+}
+
+input CreateTaskInput {
+    title: String!
+    description: String
+    priority: Int
+    assigneeId: ID
+    dueDate: String
+}
+
+input UpdateTaskInput {
+    title: String!
+    description: String
+    status: TaskStatus!
+    priority: Int!
+    assigneeId: ID
+    dueDate: String
+}
+
 type Project {
     id: ID!
     name: String!
