@@ -1,4 +1,4 @@
-package rs.raf.taskboard.controller;
+package rs.raf.taskboard.controller.graphql;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.graphql.data.method.annotation.Argument;

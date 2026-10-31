@@ -1,4 +1,4 @@
-package rs.raf.taskboard.controller;
+package rs.raf.taskboard.controller.graphql;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;

@@ -1,4 +1,4 @@
-package rs.raf.taskboard.controller;
+package rs.raf.taskboard.controller.rest;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
