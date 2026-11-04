@@ -21,6 +21,7 @@ import rs.raf.taskboard.dto.CreateCommentRequest;
 import rs.raf.taskboard.dto.CreateTaskRequest;
 import rs.raf.taskboard.dto.LoginRequest;
 import rs.raf.taskboard.dto.ProjectDto;
+import rs.raf.taskboard.dto.ProjectRequest;
 import rs.raf.taskboard.dto.RegisterRequest;
 import rs.raf.taskboard.dto.TaskDto;
 import rs.raf.taskboard.dto.UpdateCommentRequest;
@@ -68,6 +69,23 @@ public class RestApiController {
         return projectService.findById(id).orElseThrow(() -> new NotFoundException("Project", id));
     }
 
+    @PostMapping("/projects")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ProjectDto createProject(@RequestBody ProjectRequest request, @AuthenticationPrincipal Jwt jwt) {
+        return projectService.create(Long.valueOf(jwt.getSubject()), request);
+    }
+
+    @PutMapping("/projects/{id}")
+    public ProjectDto updateProject(@PathVariable Long id, @RequestBody ProjectRequest request) {
+        return projectService.update(id, request);
+    }
+
+    @DeleteMapping("/projects/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteProject(@PathVariable Long id) {
+        projectService.delete(id);
+    }
+
     @GetMapping("/projects/{id}/tasks")
     public List<TaskDto> getProjectTasks(@PathVariable Long id) {
         return taskService.findByProject(id);
@@ -102,6 +120,11 @@ public class RestApiController {
     @GetMapping("/users/{id}/tasks")
     public List<TaskDto> getUserTasks(@PathVariable Long id) {
         return taskService.findByAssignee(id);
+    }
+
+    @GetMapping("/users/{id}/projects")
+    public List<ProjectDto> getUserProjects(@PathVariable Long id) {
+        return projectService.findByOwner(id);
     }
 
     @PostMapping("/projects/{projectId}/tasks")
