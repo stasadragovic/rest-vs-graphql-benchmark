@@ -4,15 +4,29 @@ type Query {
     task(id: ID!): Task
     users(ids: [ID!]): [User!]!
     user(id: ID!): User
+    me: User!
 }
 
 type Mutation {
+    register(input: RegisterInput!): AuthPayload!
+    login(email: String!, password: String!): AuthPayload!
     createTask(projectId: ID!, input: CreateTaskInput!): Task!
     updateTask(id: ID!, input: UpdateTaskInput!): Task!
     updateTaskStatus(id: ID!, status: TaskStatus!): Task!
     deleteTask(id: ID!): Boolean!
     updateComment(id: ID!, text: String!): Comment!
     deleteComment(id: ID!): Boolean!
+}
+
+input RegisterInput {
+    name: String!
+    email: String!
+    password: String!
+}
+
+type AuthPayload {
+    token: String!
+    user: User!
 }
 
 input CreateTaskInput {

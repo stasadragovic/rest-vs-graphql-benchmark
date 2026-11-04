@@ -8,11 +8,13 @@
 SELECT setseed(0.42);
 
 -- ---------------------------------------------------------------------
--- Korisnici (id 1..50)
+-- Korisnici (id 1..50), svi imaju lozinku „password123“
+-- (gotov BCrypt heš, da bi podaci bili isti pri svakom pokretanju)
 -- ---------------------------------------------------------------------
-INSERT INTO users (name, email)
+INSERT INTO users (name, email, password_hash)
 SELECT 'Korisnik ' || g,
-       'korisnik' || g || '@example.com'
+       'korisnik' || g || '@example.com',
+       '$2a$10$5vM8PB1WD8Jlxk1wuvsvc.4hpupdeZA4O.tdAHyDXIHOPwIQZDDoO'
 FROM generate_series(1, 50) AS g;
 
 -- ---------------------------------------------------------------------

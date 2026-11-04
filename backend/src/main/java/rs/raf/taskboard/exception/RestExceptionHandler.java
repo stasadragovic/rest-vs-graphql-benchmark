@@ -17,6 +17,16 @@ public class RestExceptionHandler {
         return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getMessage());
     }
 
+    @ExceptionHandler(EmailAlreadyUsedException.class)
+    public ProblemDetail handleEmailAlreadyUsed(EmailAlreadyUsedException e) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, e.getMessage());
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ProblemDetail handleInvalidCredentials(InvalidCredentialsException e) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, e.getMessage());
+    }
+
     @ExceptionHandler(ConstraintViolationException.class)
     public ProblemDetail handleValidation(ConstraintViolationException e) {
         String detail = e.getConstraintViolations().stream()
