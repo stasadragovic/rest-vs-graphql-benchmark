@@ -20,6 +20,13 @@ public class GraphQlExceptionResolver extends DataFetcherExceptionResolverAdapte
         if (ex instanceof NotFoundException) {
             return error(env, ErrorType.NOT_FOUND, ex.getMessage());
         }
+        // GraphQL nema tip greške za konflikt (409), najbliži je BAD_REQUEST
+        if (ex instanceof EmailAlreadyUsedException) {
+            return error(env, ErrorType.BAD_REQUEST, ex.getMessage());
+        }
+        if (ex instanceof InvalidCredentialsException) {
+            return error(env, ErrorType.UNAUTHORIZED, ex.getMessage());
+        }
         if (ex instanceof ConstraintViolationException e) {
             String message = e.getConstraintViolations().stream()
                     .map(GraphQlExceptionResolver::describe)

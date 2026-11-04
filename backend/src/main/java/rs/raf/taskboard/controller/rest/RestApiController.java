@@ -2,6 +2,8 @@ package rs.raf.taskboard.controller.rest;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -13,15 +15,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import rs.raf.taskboard.dto.AuthResponse;
 import rs.raf.taskboard.dto.CommentDto;
+import rs.raf.taskboard.dto.CreateCommentRequest;
 import rs.raf.taskboard.dto.CreateTaskRequest;
+import rs.raf.taskboard.dto.LoginRequest;
 import rs.raf.taskboard.dto.ProjectDto;
+import rs.raf.taskboard.dto.RegisterRequest;
 import rs.raf.taskboard.dto.TaskDto;
 import rs.raf.taskboard.dto.UpdateCommentRequest;
 import rs.raf.taskboard.dto.UpdateTaskRequest;
 import rs.raf.taskboard.dto.UpdateTaskStatusRequest;
 import rs.raf.taskboard.dto.UserDto;
 import rs.raf.taskboard.exception.NotFoundException;
+import rs.raf.taskboard.service.AuthService;
 import rs.raf.taskboard.service.CommentService;
 import rs.raf.taskboard.service.ProjectService;
 import rs.raf.taskboard.service.TaskService;
@@ -38,6 +45,18 @@ public class RestApiController {
     private final TaskService taskService;
     private final CommentService commentService;
     private final UserService userService;
+    private final AuthService authService;
+
+    @PostMapping("/auth/register")
+    @ResponseStatus(HttpStatus.CREATED)
+    public AuthResponse register(@RequestBody RegisterRequest request) {
+        return authService.register(request);
+    }
+
+    @PostMapping("/auth/login")
+    public AuthResponse login(@RequestBody LoginRequest request) {
+        return authService.login(request);
+    }
 
     @GetMapping("/projects")
     public List<ProjectDto> getProjects(@RequestParam(defaultValue = "20") int limit) {
@@ -67,6 +86,12 @@ public class RestApiController {
     @GetMapping("/users")
     public List<UserDto> getUsers(@RequestParam(required = false) List<Long> ids) {
         return userService.findAll(ids);
+    }
+
+    @GetMapping("/users/me")
+    public UserDto getCurrentUser(@AuthenticationPrincipal Jwt jwt) {
+        Long id = Long.valueOf(jwt.getSubject());
+        return userService.findById(id).orElseThrow(() -> new NotFoundException("User", id));
     }
 
     @GetMapping("/users/{id}")
@@ -99,6 +124,13 @@ public class RestApiController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteTask(@PathVariable Long id) {
         taskService.delete(id);
+    }
+
+    @PostMapping("/tasks/{taskId}/comments")
+    @ResponseStatus(HttpStatus.CREATED)
+    public CommentDto createComment(@PathVariable Long taskId, @RequestBody CreateCommentRequest request,
+                                    @AuthenticationPrincipal Jwt jwt) {
+        return commentService.create(taskId, Long.valueOf(jwt.getSubject()), request);
     }
 
     @PutMapping("/comments/{id}")

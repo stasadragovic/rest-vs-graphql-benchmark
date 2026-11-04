@@ -6,10 +6,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import rs.raf.taskboard.dto.CommentDto;
+import rs.raf.taskboard.dto.CreateCommentRequest;
 import rs.raf.taskboard.dto.UpdateCommentRequest;
 import rs.raf.taskboard.exception.NotFoundException;
 import rs.raf.taskboard.model.Comment;
 import rs.raf.taskboard.repository.CommentRepository;
+import rs.raf.taskboard.repository.TaskRepository;
+import rs.raf.taskboard.repository.UserRepository;
 
 import java.util.Collection;
 import java.util.List;
@@ -23,6 +26,8 @@ import java.util.stream.Collectors;
 public class CommentService {
 
     private final CommentRepository commentRepository;
+    private final TaskRepository taskRepository;
+    private final UserRepository userRepository;
 
     public List<CommentDto> findByTask(Long taskId) {
         return commentRepository.findByTaskIdOrderByIdAsc(taskId).stream()
@@ -34,6 +39,17 @@ public class CommentService {
         return commentRepository.findByTaskIdInOrderByIdAsc(taskIds).stream()
                 .map(CommentDto::from)
                 .collect(Collectors.groupingBy(CommentDto::taskId));
+    }
+
+    @Transactional
+    public CommentDto create(Long taskId, Long authorId, @Valid CreateCommentRequest request) {
+        Comment comment = new Comment();
+        comment.setTask(taskRepository.findById(taskId)
+                .orElseThrow(() -> new NotFoundException("Task", taskId)));
+        comment.setAuthor(userRepository.findById(authorId)
+                .orElseThrow(() -> new NotFoundException("User", authorId)));
+        comment.setText(request.text());
+        return CommentDto.from(commentRepository.save(comment));
     }
 
     @Transactional
