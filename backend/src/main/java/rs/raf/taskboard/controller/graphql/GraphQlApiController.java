@@ -10,6 +10,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Controller;
 import rs.raf.taskboard.dto.AuthResponse;
 import rs.raf.taskboard.dto.CommentDto;
+import rs.raf.taskboard.dto.CreateCommentRequest;
 import rs.raf.taskboard.dto.CreateTaskRequest;
 import rs.raf.taskboard.dto.LoginRequest;
 import rs.raf.taskboard.dto.ProjectDto;
@@ -103,6 +104,11 @@ public class GraphQlApiController {
     public boolean deleteTask(@Argument Long id) {
         taskService.delete(id);
         return true;
+    }
+
+    @MutationMapping
+    public CommentDto createComment(@Argument Long taskId, @Argument String text, @AuthenticationPrincipal Jwt jwt) {
+        return commentService.create(taskId, Long.valueOf(jwt.getSubject()), new CreateCommentRequest(text));
     }
 
     @MutationMapping

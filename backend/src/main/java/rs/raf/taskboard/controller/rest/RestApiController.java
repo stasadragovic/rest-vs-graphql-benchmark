@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import rs.raf.taskboard.dto.AuthResponse;
 import rs.raf.taskboard.dto.CommentDto;
+import rs.raf.taskboard.dto.CreateCommentRequest;
 import rs.raf.taskboard.dto.CreateTaskRequest;
 import rs.raf.taskboard.dto.LoginRequest;
 import rs.raf.taskboard.dto.ProjectDto;
@@ -123,6 +124,13 @@ public class RestApiController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteTask(@PathVariable Long id) {
         taskService.delete(id);
+    }
+
+    @PostMapping("/tasks/{taskId}/comments")
+    @ResponseStatus(HttpStatus.CREATED)
+    public CommentDto createComment(@PathVariable Long taskId, @RequestBody CreateCommentRequest request,
+                                    @AuthenticationPrincipal Jwt jwt) {
+        return commentService.create(taskId, Long.valueOf(jwt.getSubject()), request);
     }
 
     @PutMapping("/comments/{id}")

@@ -14,6 +14,7 @@ type Mutation {
     updateTask(id: ID!, input: UpdateTaskInput!): Task!
     updateTaskStatus(id: ID!, status: TaskStatus!): Task!
     deleteTask(id: ID!): Boolean!
+    createComment(taskId: ID!, text: String!): Comment!
     updateComment(id: ID!, text: String!): Comment!
     deleteComment(id: ID!): Boolean!
 }
