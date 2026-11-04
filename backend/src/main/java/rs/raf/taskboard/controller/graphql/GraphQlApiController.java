@@ -14,6 +14,7 @@ import rs.raf.taskboard.dto.CreateCommentRequest;
 import rs.raf.taskboard.dto.CreateTaskRequest;
 import rs.raf.taskboard.dto.LoginRequest;
 import rs.raf.taskboard.dto.ProjectDto;
+import rs.raf.taskboard.dto.ProjectRequest;
 import rs.raf.taskboard.dto.RegisterRequest;
 import rs.raf.taskboard.dto.TaskDto;
 import rs.raf.taskboard.dto.UpdateCommentRequest;
@@ -83,6 +84,22 @@ public class GraphQlApiController {
     public UserDto me(@AuthenticationPrincipal Jwt jwt) {
         Long id = Long.valueOf(jwt.getSubject());
         return userService.findById(id).orElseThrow(() -> new NotFoundException("User", id));
+    }
+
+    @MutationMapping
+    public ProjectDto createProject(@Argument ProjectRequest input, @AuthenticationPrincipal Jwt jwt) {
+        return projectService.create(Long.valueOf(jwt.getSubject()), input);
+    }
+
+    @MutationMapping
+    public ProjectDto updateProject(@Argument Long id, @Argument ProjectRequest input) {
+        return projectService.update(id, input);
+    }
+
+    @MutationMapping
+    public boolean deleteProject(@Argument Long id) {
+        projectService.delete(id);
+        return true;
     }
 
     @MutationMapping

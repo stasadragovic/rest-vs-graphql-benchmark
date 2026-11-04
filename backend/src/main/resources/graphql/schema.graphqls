@@ -10,6 +10,9 @@ type Query {
 type Mutation {
     register(input: RegisterInput!): AuthPayload!
     login(email: String!, password: String!): AuthPayload!
+    createProject(input: ProjectInput!): Project!
+    updateProject(id: ID!, input: ProjectInput!): Project!
+    deleteProject(id: ID!): Boolean!
     createTask(projectId: ID!, input: CreateTaskInput!): Task!
     updateTask(id: ID!, input: UpdateTaskInput!): Task!
     updateTaskStatus(id: ID!, status: TaskStatus!): Task!
@@ -28,6 +31,11 @@ input RegisterInput {
 type AuthPayload {
     token: String!
     user: User!
+}
+
+input ProjectInput {
+    name: String!
+    description: String
 }
 
 input CreateTaskInput {
@@ -90,4 +98,5 @@ type User {
     email: String!
     createdAt: String!
     assignedTasks: [Task!]!
+    ownedProjects: [Project!]!
 }

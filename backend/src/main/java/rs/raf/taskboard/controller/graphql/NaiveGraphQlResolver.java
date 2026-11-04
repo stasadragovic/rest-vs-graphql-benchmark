@@ -65,4 +65,9 @@ public class NaiveGraphQlResolver {
     public List<TaskDto> assignedTasks(UserDto user) {
         return taskService.findByAssignee(user.id());
     }
+
+    @SchemaMapping(typeName = "User")
+    public List<ProjectDto> ownedProjects(UserDto user) {
+        return projectService.findByOwner(user.id());
+    }
 }
