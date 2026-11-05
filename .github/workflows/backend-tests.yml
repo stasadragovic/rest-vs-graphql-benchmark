@@ -1,0 +1,42 @@
+name: Backend tests
+
+on:
+  push:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Start database
+        run: docker compose up -d --wait
+
+      # pg_isready javlja "spremno" i dok se schema.sql i data.sql još izvršavaju.
+      # Tada baza sluša samo unutar kontejnera, pa se čeka da odgovori preko TCP-a
+      # (pravo pokretanje) i da budu upisani svi komentari (poslednja tabela u data.sql)
+      - name: Wait for test data
+        run: |
+          for i in $(seq 1 60); do
+            count=$(docker exec -e PGPASSWORD=diplomski diplomski-db psql -h 127.0.0.1 -U diplomski -d projectdb -tAc "SELECT count(*) FROM comments" 2>/dev/null || true)
+            if [ "$count" = "30000" ]; then echo "Data ready"; exit 0; fi
+            sleep 2
+          done
+          echo "Test data was not loaded"; exit 1
+
+      # .env nije na git-u; za testove je dovoljan nasumičan ključ
+      - name: Run tests
+        working-directory: backend
+        run: |
+          export JWT_SECRET=$(openssl rand -base64 32)
+          bash mvnw -B test
