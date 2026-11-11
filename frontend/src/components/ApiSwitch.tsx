@@ -17,11 +17,9 @@ export default function ApiSwitch() {
           type="button"
           aria-pressed={current === mode}
           onClick={() => setApiMode(mode)}
-          className={
-            current === mode
-              ? 'rounded-md bg-primary px-3 py-1 text-white'
-              : 'rounded-md px-3 py-1 text-muted hover:text-white'
-          }
+          className={`rounded-md px-3 py-1 outline-none focus-visible:ring-2 focus-visible:ring-sand ${
+            current === mode ? 'bg-primary text-white' : 'text-muted hover:text-white'
+          }`}
         >
           {label}
         </button>
